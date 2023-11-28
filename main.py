@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-TOKEN = os.getenv('TOKEN')
+TOKEN = os.getenv('Token')
 # importation des intents du bot discord
 intents = discord.Intents().all()
 # initialisation du prefix du bot
