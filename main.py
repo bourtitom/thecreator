@@ -3,7 +3,11 @@ from cogs import character
 from discord.ext.commands import Context
 from discord import app_commands
 from discord.ext import commands
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+TOKEN = os.getenv('TOKEN')
 # importation des intents du bot discord
 intents = discord.Intents().all()
 # initialisation du prefix du bot
@@ -62,4 +66,4 @@ async def classes(interaction: discord.Interaction):
     await interaction.response.send_message(view=character.ClassesView(),ephemeral = True)
 
 # token du bot (a changer de place avec dotenv)
-bot.run("MTE3NzYxOTExODg1NDI0NjQ4Mg.GHWPb7.I7KeKJ2oZqmuzywo1rOB1TPwPXNqV58CYZu3q4")
+bot.run(TOKEN)
