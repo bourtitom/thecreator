@@ -1,4 +1,5 @@
 import discord
+from cogs import character
 from discord.ext.commands import Context
 from discord import app_commands
 from discord.ext import commands
@@ -38,43 +39,27 @@ def is_owner(interaction):
 async def test_slash(interaction : discord.interactions):
     await interaction.response.send_message('TEST !')
 
+
+@bot.tree.command(guild = discord.Object(id= servId), name = "latence" , description = "Avoir la latence du bot",)
+@commands.has_permissions(administrator=True)
+async def latence(interaction : discord.interactions):
+    latency = bot.latency
+    embed = discord.Embed(title = "**Latence**")
+    embed.set_thumbnail(url ="https://images.frandroid.com/wp-content/uploads/2021/03/latence-reseau-lag.png")
+    embed.add_field(name="Latence du bot : ",value=f"**{latency}**")
+    await interaction.response.send_message(embed = embed)
+ 
+
 @bot.command()
 async def say(ctx, *texte):
     await ctx.send(" ".join(texte))
     await ctx.message.delete()
     print(f"{ctx.message.author} cette utilisateur a utiliser la commande say pour ecrire {texte}")
 
-
-
-    # CREATION DU PERSONNAGE
-
+# CREATION DU PERSONNAGE
 @bot.tree.command(guild = discord.Object(id = servId), name = "start", description = "Commencer l'aventure")
 async def classes(interaction: discord.Interaction):
-    await interaction.response.send_message(view=ClassesView(),ephemeral = True)
-
-
-    # LES CLASSES
-class Classes(discord.ui.Select):
-	def __init__(self):
-		options = [
-            discord.SelectOption(label= "Classe guerrier"),
-            discord.SelectOption(label= "Classe archer", value = "archer"),
-            discord.SelectOption(label= "Classe voleur", value = "voleur"),
-            discord.SelectOption(label= "Classe magicien", value = "magicien"),
-             ]
-		super().__init__(placeholder = "Choisis ta classes", options = options, min_values = 1, max_values = 1)
-	async def callback(self,interaction : discord.interactions):
-         await interaction.response.send_message(f"Vous avez choisis la classe {self.values[0]}")
-         
-
-class ClassesView(discord.ui.View):
-    def __init__ (self):
-        super().__init__()
-        self.add_item(Classes())
-
-
-
-
+    await interaction.response.send_message(view=character.ClassesView(),ephemeral = True)
 
 # token du bot (a changer de place avec dotenv)
 bot.run("MTE3NzYxOTExODg1NDI0NjQ4Mg.GHWPb7.I7KeKJ2oZqmuzywo1rOB1TPwPXNqV58CYZu3q4")
