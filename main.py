@@ -45,11 +45,11 @@ async def latence(interaction : discord.interactions):
 async def classes(interaction: discord.Interaction):
     await interaction.response.send_message(view=character.ClassesView(),ephemeral = True)
 
-@bot.command(name = "talk")
+@bot.command(name="talk")
 async def talk(ctx, prenom_pnj, message):
     pnj_trouve = None
     for pnjSearch in pnj.liste_pnj:
-        if pnj.prenom == prenom_pnj:
+        if pnjSearch.prenom == prenom_pnj:
             pnj_trouve = pnjSearch
             break
 
@@ -59,6 +59,7 @@ async def talk(ctx, prenom_pnj, message):
         await ctx.send(f"{pnj_trouve.prenom}: {reponse_gpt}")
     else:
         await ctx.send("PNJ non trouvé.")
+
 
 # Exécuter le bot avec le token
 bot.run(discord_token)
