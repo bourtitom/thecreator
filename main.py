@@ -1,7 +1,7 @@
 import discord
 from cogs import character
 from PNJ import pnj
-from ChatGPT import ChatGPT
+from cogs import ChatGPT
 from discord.ext import commands
 from decouple import config
 import os
