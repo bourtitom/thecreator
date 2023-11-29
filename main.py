@@ -14,7 +14,7 @@ intents = discord.Intents().all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 # Événement lorsque le bot est prêt
-@bot.event
+@bot.event()
 async def on_ready():
     await bot.load_extension("chat_gpt")
     print(f'Connecté en tant que {bot.user.name} ({bot.user.id})')
