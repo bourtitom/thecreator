@@ -1,4 +1,5 @@
 import discord
+from cogs import character
 from discord.ext import commands
 from decouple import config
 import os
@@ -35,6 +36,11 @@ async def latence(interaction : discord.interactions):
     embed.set_thumbnail(url ="https://images.frandroid.com/wp-content/uploads/2021/03/latence-reseau-lag.png")
     embed.add_field(name="Latence du bot : ",value=f"**{latency}**")
     await interaction.response.send_message(embed = embed)
+
+    # CREATION DU PERSONNAGE
+@bot.tree.command(guild = discord.Object(id = servId), name = "start", description = "Commencer l'aventure")
+async def classes(interaction: discord.Interaction):
+    await interaction.response.send_message(view=character.ClassesView(),ephemeral = True)
 
 # Exécuter le bot avec le token
 bot.run(discord_token)
