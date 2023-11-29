@@ -33,5 +33,10 @@ async def on_ready():
     except Exception as e:
         print(e)
 
+# premiere commande de test
+@bot.tree.command(guild = discord.Object(id= servId), name = "test" , description = "test",)
+async def test_slash(interaction : discord.interactions):
+    await interaction.response.send_message('TEST !')
+
 # token du bot (a changer de place avec dotenv)
 bot.run(discord_token)
