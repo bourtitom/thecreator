@@ -49,7 +49,7 @@ async def classes(interaction: discord.Interaction):
 async def talk(ctx, nom_pnj, message):
     pnj_trouve = None
     for pnj in pnj.liste_pnj:
-        if pnj.nom == nom_pnj:
+        if pnj.prenom == nom_pnj:
             pnj_trouve = pnj
             break
 
