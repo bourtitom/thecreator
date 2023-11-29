@@ -34,36 +34,6 @@ async def on_ready():
 
     except Exception as e:
         print(e)
-# detection du owner du serveur   
-def is_owner(interaction):
-        return interaction.user.id == interaction.guild.owner.id
-
-# premiere commande de test
-@bot.tree.command(guild = discord.Object(id= servId), name = "test" , description = "test",)
-async def test_slash(interaction : discord.interactions):
-    await interaction.response.send_message('TEST !')
-
-
-@bot.tree.command(guild = discord.Object(id= servId), name = "latence" , description = "Avoir la latence du bot",)
-@commands.has_permissions(administrator=True)
-async def latence(interaction : discord.interactions):
-    latency = bot.latency
-    embed = discord.Embed(title = "**Latence**")
-    embed.set_thumbnail(url ="https://images.frandroid.com/wp-content/uploads/2021/03/latence-reseau-lag.png")
-    embed.add_field(name="Latence du bot : ",value=f"**{latency}**")
-    await interaction.response.send_message(embed = embed)
- 
-
-@bot.command()
-async def say(ctx, *texte):
-    await ctx.send(" ".join(texte))
-    await ctx.message.delete()
-    print(f"{ctx.message.author} cette utilisateur a utiliser la commande say pour ecrire {texte}")
-
-# CREATION DU PERSONNAGE
-@bot.tree.command(guild = discord.Object(id = servId), name = "start", description = "Commencer l'aventure")
-async def classes(interaction: discord.Interaction):
-    await interaction.response.send_message(view=character.ClassesView(),ephemeral = True)
 
 # token du bot (a changer de place avec dotenv)
 bot.run(discord_token)
