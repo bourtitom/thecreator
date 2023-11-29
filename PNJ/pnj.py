@@ -1,5 +1,5 @@
 class PNJ:
-    def __init__(self, nom, prenom, age, marchant ):
+    def __init__(self, prenom, nom, age, marchant ):
         self.nom = nom
         self.age = age
         self.marchant = marchant

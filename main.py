@@ -46,17 +46,17 @@ async def classes(interaction: discord.Interaction):
     await interaction.response.send_message(view=character.ClassesView(),ephemeral = True)
 
 @bot.command(name = "talk")
-async def talk(ctx, nom_pnj, message):
+async def talk(ctx, prenom_pnj, message):
     pnj_trouve = None
     for pnj in pnj.liste_pnj:
-        if pnj.prenom == nom_pnj:
+        if pnj.prenom == prenom_pnj:
             pnj_trouve = pnj
             break
 
     if pnj_trouve:
         # Utilisez l'API GPT-3.5 pour générer une réponse
         reponse_gpt = chatGPT.ask_for_response(message)
-        await ctx.send(f"{pnj_trouve.nom}: {reponse_gpt}")
+        await ctx.send(f"{pnj_trouve.prenom}: {reponse_gpt}")
     else:
         await ctx.send("PNJ non trouvé.")
 
