@@ -4,7 +4,6 @@ from discord import app_commands
 
 intents = discord.Intents().all()
 bot = commands.Bot(command_prefix='+', intents=intents)
-tree = app_commands.CommandTree(bot)
 
 servId = 1177549504883466340
 
