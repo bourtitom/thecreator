@@ -1,5 +1,7 @@
 import discord
 from cogs import character
+from PNJ import pnj
+import chatGPT
 from discord.ext import commands
 from decouple import config
 import os
@@ -16,7 +18,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 # Événement lorsque le bot est prêt
 @bot.event
 async def on_ready():
-    bot.load_extension("chat-gpt")
+    bot.load_extension("chatGPT")
     print(f'Connecté en tant que {bot.user.name} ({bot.user.id})')
 
 # Commande simple pour répondre à "ping" avec "pong"
@@ -42,6 +44,21 @@ async def latence(interaction : discord.interactions):
 @bot.tree.command(guild = discord.Object(id = servId), name = "start", description = "Commencer l'aventure")
 async def classes(interaction: discord.Interaction):
     await interaction.response.send_message(view=character.ClassesView(),ephemeral = True)
+
+@bot.command(name = "talk")
+async def talk(ctx, nom_pnj, message):
+    pnj_trouve = None
+    for pnj in pnj.liste_pnj:
+        if pnj.nom == nom_pnj:
+            pnj_trouve = pnj
+            break
+
+    if pnj_trouve:
+        # Utilisez l'API GPT-3.5 pour générer une réponse
+        reponse_gpt = chatGPT.ask_for_response(message)
+        await ctx.send(f"{pnj_trouve.nom}: {reponse_gpt}")
+    else:
+        await ctx.send("PNJ non trouvé.")
 
 # Exécuter le bot avec le token
 bot.run(discord_token)

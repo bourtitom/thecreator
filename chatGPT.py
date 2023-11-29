@@ -13,6 +13,7 @@ class ChatGPT(commands.Cog):
 
         message = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
+            max_tokens=100,
             messages=[
                 {"role": "systeme", "content": "Tu es un bot discord"},
                 {"role": "user", "content": question}
