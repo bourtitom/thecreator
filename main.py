@@ -1,7 +1,7 @@
 import discord
 from cogs import character
 from PNJ import pnj
-import chatGPT
+from ChatGPT import ChatGPT
 from discord.ext import commands
 from decouple import config
 import os
@@ -55,13 +55,14 @@ async def talk(ctx, prenom_pnj, message):
 
     if pnj_trouve:
         # Créez une instance de la classe ChatGPT
-        chat_gpt_instance = chatGPT.ChatGPT(bot)
+        chat_gpt_instance = ChatGPT(bot)
         
         # Utilisez l'API GPT-3.5 pour générer une réponse
-        reponse_gpt = await chat_gpt_instance.ask_for_response(ctx, question=message)
+        reponse_gpt = await chat_gpt_instance.ask_for_response(ctx=ctx, question=message)
         await ctx.send(f"{pnj_trouve.prenom}: {reponse_gpt}")
     else:
         await ctx.send("PNJ non trouvé.")
+
 
 
 # Exécuter le bot avec le token
