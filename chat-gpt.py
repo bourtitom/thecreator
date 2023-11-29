@@ -4,10 +4,11 @@ import os
 from discord.ext import commands
 
 class ChatGPT(commands.Cog):
-    # ... (autres méthodes)
+    def __init__(self, bot):
+        self.bot = bot
 
     @commands.command(name="ask")
-    async def ask_for_response(self, ctx: commands.Context, *, question: str):
+    async def ask_for_response(self, ctx, *, question: str):
         await ctx.defer()
 
         message = openai.ChatCompletion.create(
