@@ -3,7 +3,9 @@ from discord.ext.commands import Context
 from discord import app_commands
 from discord.ext import commands
 from decouple import config
+import os
 
+PORT = int(os.environ.get('PORT', 5000))
 discord_token = config('DISCORD_TOKEN')
 
 # importation des intents du bot discord
@@ -39,4 +41,4 @@ async def test_slash(interaction : discord.interactions):
     await interaction.response.send_message('TEST !')
 
 # token du bot (a changer de place avec dotenv)
-bot.run(discord_token)
+bot.run(discord_token, port = PORT)
