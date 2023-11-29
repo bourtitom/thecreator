@@ -1,44 +1,24 @@
 import discord
-from discord.ext.commands import Context
-from discord import app_commands
 from discord.ext import commands
 from decouple import config
 import os
 
-PORT = int(os.environ.get('PORT', 5000))
-discord_token = config('DISCORD_TOKEN')
+# Récupérer le token depuis les variables d'environnement ou un fichier .env
+discord_token = os.environ.get('DISCORD_TOKEN', config('DISCORD_TOKEN'))
 
-# importation des intents du bot discord
+# Initialiser le bot
 intents = discord.Intents().all()
-# initialisation du prefix du bot
-bot = commands.Bot(command_prefix = '+', intents = intents)
-# configuration des intents
-intents.message_content = True
-intents.guilds = True
-intents.members = True
-# lier l'appelle du bot a une variable
-client = discord.Client(intents = intents)
-# commande slash
-tree = app_commands.CommandTree(client)
+bot = commands.Bot(command_prefix='!', intents=intents)
 
-servId = 1177549504883466340
-# verifier si le bot s'est bien connecter 
+# Événement lorsque le bot est prêt
 @bot.event
 async def on_ready():
-    print(f"{bot.user.name} s'est bien connecter")
+    print(f'Connecté en tant que {bot.user.name} ({bot.user.id})')
 
-    try:
-        synced = await bot.tree.sync(guild = discord.Object(id=servId))
-        # affichage de tout les commandes fonctionnel
-        print(f"Synced {(len(synced))} commands")
+# Commande simple pour répondre à "ping" avec "pong"
+@bot.command(name='ping')
+async def ping(ctx):
+    await ctx.send('Pong!')
 
-    except Exception as e:
-        print(e)
-
-# premiere commande de test
-@bot.tree.command(guild = discord.Object(id= servId), name = "test" , description = "test",)
-async def test_slash(interaction : discord.interactions):
-    await interaction.response.send_message('TEST !')
-
-# token du bot (a changer de place avec dotenv)
-bot.run(discord_token, port = PORT)
+# Exécuter le bot avec le token
+bot.run(discord_token)
