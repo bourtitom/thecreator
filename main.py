@@ -16,7 +16,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 # Événement lorsque le bot est prêt
 @bot.event
 async def on_ready():
-    await bot.load_extension("chat-gpt")
+    bot.load_extension("chat-gpt")
     print(f'Connecté en tant que {bot.user.name} ({bot.user.id})')
 
 # Commande simple pour répondre à "ping" avec "pong"
