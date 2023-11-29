@@ -21,8 +21,6 @@ class ChatGPT(commands.Cog):
         )
 
         response = message["choices"][0]["message"]["content"]
-
-        return await ctx.send(response)
-    
+        return response    
 def setup(bot):
     bot.add_cog(ChatGPT(bot))

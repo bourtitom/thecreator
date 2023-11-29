@@ -54,8 +54,11 @@ async def talk(ctx, prenom_pnj, message):
             break
 
     if pnj_trouve:
+        # Créez une instance de la classe ChatGPT
+        chat_gpt_instance = chatGPT.ChatGPT(bot)
+        
         # Utilisez l'API GPT-3.5 pour générer une réponse
-        reponse_gpt = chatGPT.ask_for_response(message)
+        reponse_gpt = await chat_gpt_instance.ask_for_response(ctx, question=message)
         await ctx.send(f"{pnj_trouve.prenom}: {reponse_gpt}")
     else:
         await ctx.send("PNJ non trouvé.")
