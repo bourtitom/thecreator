@@ -48,9 +48,9 @@ async def classes(interaction: discord.Interaction):
 @bot.command(name = "talk")
 async def talk(ctx, prenom_pnj, message):
     pnj_trouve = None
-    for pnj in pnj.liste_pnj:
+    for pnjSearch in pnj.liste_pnj:
         if pnj.prenom == prenom_pnj:
-            pnj_trouve = pnj
+            pnj_trouve = pnjSearch
             break
 
     if pnj_trouve:
