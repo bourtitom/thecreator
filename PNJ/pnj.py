@@ -9,6 +9,6 @@ class PNJ:
         return f"{self.nom} {self.prenom}: {message}"
 
 liste_pnj = [
-    PNJ("Thorne","Sablelock", age = 30, marchant = False, ),
-    PNJ("Seren","Frostshade", age = 22, marchant= True, ),
+    PNJ(prenom = "Thorne",nom = "Sablelock", age = 30, marchant = False, ),
+    PNJ(prenom = "Seren",nom = "Frostshade", age = 22, marchant = True, ),
 ]
