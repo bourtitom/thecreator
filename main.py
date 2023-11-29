@@ -3,6 +3,8 @@ from discord.ext import commands
 from decouple import config
 import os
 
+servId = 1177549504883466340
+
 # Récupérer le token depuis les variables d'environnement ou un fichier .env
 discord_token = os.environ.get('DISCORD_TOKEN', config('DISCORD_TOKEN'))
 
@@ -19,6 +21,11 @@ async def on_ready():
 @bot.command(name='ping')
 async def ping(ctx):
     await ctx.send('Pong!')
+
+# premiere commande de test
+@bot.tree.command(guild = discord.Object(id= servId), name = "test" , description = "test",)
+async def test_slash(interaction : discord.interactions):
+    await interaction.response.send_message('TEST !')
 
 # Exécuter le bot avec le token
 bot.run(discord_token)
