@@ -1,5 +1,6 @@
 import discord
-from discord.ext import commands, app_commands
+from discord.ext import commands
+from discord import app_commands
 
 intents = discord.Intents().all()
 bot = commands.Bot(command_prefix='+', intents=intents)
