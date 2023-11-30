@@ -130,7 +130,7 @@ async def say(interaction: discord.Interaction, prenom: str, nom: str, sexes: ap
     elif myperso.classes == "chaman":
         url ="https://cdn.discordapp.com/attachments/1178978706342023238/1178978706467864617/image.png?ex=65781c7b&is=6565a77b&hm=b3502700c842c147e73bcf02787227bf8e10aeb45c5c1637461957b280f10207&"
 
-    embed.set_thumbnail(url)
+    embed.set_thumbnail(url=url)
     embed.add_field(name="Prenom Nom", value="Guerrier")
 
     embed.set_footer(text="Create by The Creator")
