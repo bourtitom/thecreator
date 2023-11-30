@@ -1,10 +1,10 @@
 import discord
+import os
+import openai
 from cogs import character
-from PNJ import chatGPT
 from PNJ import pnj
 from discord.ext import commands
 from decouple import config
-import os
 
 servId = 1177549504883466340
 
@@ -18,8 +18,13 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 # Événement lorsque le bot est prêt
 @bot.event
 async def on_ready():
-    bot.load_extension("chatGPT")
     print(f'Connecté en tant que {bot.user.name} ({bot.user.id})')
+
+    # Ajoutez la cog ChatGPT
+    bot.add_cog(ChatGPT(bot))
+    
+    # Chargez l'extension ChatGPT
+    bot.load_extension("chatGPT")
 
 # Commande simple pour répondre à "ping" avec "pong"
 @bot.command(name='ping')
@@ -45,23 +50,52 @@ async def latence(interaction : discord.interactions):
 async def classes(interaction: discord.Interaction):
     await interaction.response.send_message(view=character.ClassesView(),ephemeral = True)
 
-@bot.command(name="talk")
-async def talk(ctx, prenom_pnj, message):
-    pnj_trouve = None
-    for pnjSearch in pnj.liste_pnj:
-        if pnjSearch.prenom == prenom_pnj:
-            pnj_trouve = pnjSearch
-            break
+class ChatGPT(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        openai.api_key = "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"
+
+    async def ask_for_response(self, ctx, question: str):
+        await ctx.defer()
+
+        message = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            max_tokens=100,
+            messages=[
+                {"role": "system", "content": "tu es un humain l'lambda mais passionné de code"},
+                {"role": "user", "content": question}
+            ]
+        )
+
+        response = message["choices"][0]["message"]["content"]
+
+        return response
+
+@bot.command()
+async def talk(ctx, prenom_pnj, *, message=None):
+    if message is None:
+        await ctx.send("Veuillez fournir un message.")
+        return
+
+    pnj_trouve = next((pnjSearch for pnjSearch in pnj.liste_pnj_global if pnjSearch.prenom == prenom_pnj), None)
 
     if pnj_trouve:
         # Créez une instance de la classe ChatGPT
-        chat_gpt_instance = chatGPT(bot)
+        chat_gpt_instance = ChatGPT(bot)
         
         # Utilisez l'API GPT-3.5 pour générer une réponse
-        reponse_gpt = await chat_gpt_instance.ask_for_response(ctx=ctx, question=message)
-        await ctx.send(f"{pnj_trouve.prenom}: {reponse_gpt}")
+        reponse_gpt = await chat_gpt_instance.ask_for_response(ctx, question=message)
+        
+        # Affichez des informations sur le PNJ trouvé
+        await ctx.send(f"{pnj_trouve.prenom} {pnj_trouve.nom}, Âge: {pnj_trouve.age}, Marchand: {pnj_trouve.marchand} : {reponse_gpt}")
     else:
-        await ctx.send("PNJ non trouvé.")
+        # Envoyez un message si le PNJ n'est pas trouvé
+        print("ez")
+
+def setup(bot):
+    bot.add_cog(ChatGPT(bot))
+
+
 
 
 
