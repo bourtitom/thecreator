@@ -117,9 +117,20 @@ def setup(bot):
 ])
 async def say(interaction: discord.Interaction, prenom: str, nom: str, sexes: app_commands.Choice[str], races: app_commands.Choice[str], classes: app_commands.Choice[str]):
     myperso = character.CreatePerso(prenom, nom, sexes, races, classes)
-
     embed = discord.Embed(title="Bienvenue dans le monde de Haxril", description="N'hesite pas a faire /lore pour avoir connaitre l'histoire du monde", colour=discord.Colour.random())
-    embed.set_thumbnail(url ="https://images.frandroid.com/wp-content/uploads/2021/03/latence-reseau-lag.png")
+    
+    if myperso.classes == "guerrier": 
+        url ="https://cdn.discordapp.com/attachments/1178679100358013020/1178679100622262272/dragonica-warrior.png?ex=65770574&is=65649074&hm=c619c31d4d4c0e872e405a77558b7c88c640350db413e3420e31871e816a62cb&"
+    elif myperso.classes == "voleur":
+        url ="https://media.discordapp.net/attachments/1178679175402500096/1178679175540920540/image.png?ex=65770586&is=65649086&hm=ff4947497207a4aaf7c380ca81f5af8ef15497324a14651f8428c3c79f9229e5&=&format=webp&quality=lossless&width=520&height=600"
+    elif myperso.classes == "archer":
+        url ="https://media.discordapp.net/attachments/1178678739366858812/1178678739601735801/image.png?ex=6577051e&is=6564901e&hm=3b6b5cf043c8d13d01bcd95c23f8109330c26e67c09a6e83b50d6835b6b6f1ec&=&format=webp&quality=lossless&width=520&height=600"
+    elif myperso.classes == "magicien":
+        url ="https://media.discordapp.net/attachments/1178677733279146095/1178677733862146108/dragonica-magician.png?ex=6577042e&is=65648f2e&hm=67b87c6337af458c94f931cc355a77430d3d31db8eba4d39ce38e4919dd47aee&=&format=webp&quality=lossless&width=520&height=600"
+    elif myperso.classes == "chaman":
+        url ="https://cdn.discordapp.com/attachments/1178978706342023238/1178978706467864617/image.png?ex=65781c7b&is=6565a77b&hm=b3502700c842c147e73bcf02787227bf8e10aeb45c5c1637461957b280f10207&"
+
+    embed.set_thumbnail(url)
     embed.add_field(name="Prenom Nom", value="Guerrier")
 
     embed.set_footer(text="Create by The Creator")
