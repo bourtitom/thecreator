@@ -34,10 +34,6 @@ async def on_ready():
 async def ping(ctx):
     await ctx.send('Pong!')
 
-# premiere commande de test
-@bot.tree.command(guild = discord.Object(id= servId), name = "feur" , description = "test",)
-async def test_slash(interaction : discord.interactions):
-    await interaction.response.send_message('TEST !')
 
 @bot.tree.command(guild = discord.Object(id= servId), name = "latence" , description = "Avoir la latence du bot",)
 @commands.has_permissions(administrator=True)
