@@ -1,6 +1,7 @@
 import discord
 from cogs import character
 from discord.ext.commands import Context
+from discord.ui import Button, View
 from discord import app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -52,18 +53,36 @@ async def latence(interaction : discord.interactions):
     embed.set_thumbnail(url ="https://images.frandroid.com/wp-content/uploads/2021/03/latence-reseau-lag.png")
     embed.add_field(name="Latence du bot : ",value=f"**{latency}**")
     await interaction.response.send_message(embed = embed)
- 
 
-@bot.command()
-async def say(ctx, *texte):
-    await ctx.send(" ".join(texte))
-    await ctx.message.delete()
-    print(f"{ctx.message.author} cette utilisateur a utiliser la commande say pour ecrire {texte}")
 
-# CREATION DU PERSONNAGE
-@bot.tree.command(guild = discord.Object(id = servId), name = "start", description = "Commencer l'aventure")
-async def classes(interaction: discord.Interaction):
-    await interaction.response.send_message(view=character.ClassesView(),ephemeral = True)
+
+
+@bot.tree.command(guild = discord.Object(id= servId), name = "start" , description = "Commencer l'aventure",)
+@app_commands.describe(prenom = "prenom du perso", nom = "nom du perso", sexes = "t'as quoi entre les jambes", races = "ton ethnie", classes = "quelle classes tu vas incarné")
+@app_commands.choices(sexes=[
+    discord.app_commands.Choice(name='Homme', value='homme'),
+    discord.app_commands.Choice(name='Femme', value='femme'),
+    discord.app_commands.Choice(name='Autre', value='autre')
+], races = [
+     discord.app_commands.Choice(name='Guerrier' , value='guerrier'),
+     discord.app_commands.Choice(name='Voleur' , value='voleur'),
+     discord.app_commands.Choice(name='Archer' , value='archer'),
+     discord.app_commands.Choice(name='Magicien' , value='magicien')
+], classes = [
+     discord.app_commands.Choice(name='Humains' , value='humains'),
+     discord.app_commands.Choice(name='Elfes' , value='elfes'),
+     discord.app_commands.Choice(name='Nains' , value='nains'),
+     discord.app_commands.Choice(name='Demi-Géant' , value='demigeant'),
+     discord.app_commands.Choice(name='Demi-Ange' , value='demiange'),
+     discord.app_commands.Choice(name='Demi-Demon' , value='demidemon')
+
+]
+)
+async def say(interaction: discord.Interaction, prenom: str, nom: str, sexes: app_commands.Choice[str], races: app_commands.Choice[str], classes: app_commands.Choice[str]):
+    myperso = character.CreatePerso(prenom, nom, sexes, races, classes)
+    
+    await interaction.response.send_message(f"Très Bien: `{myperso.prenom} {myperso.nom}`")
+
 
 # token du bot (a changer de place avec dotenv)
 bot.run(TOKEN)
