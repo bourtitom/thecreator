@@ -4,7 +4,10 @@ import openai
 from cogs import character
 from PNJ import pnj
 from discord.ext import commands
+from discord import app_commands
 from decouple import config
+from dotenv import load_dotenv
+
 
 servId = 1177549504883466340
 
@@ -46,9 +49,6 @@ async def latence(interaction : discord.interactions):
     await interaction.response.send_message(embed = embed)
 
     # CREATION DU PERSONNAGE
-@bot.tree.command(guild = discord.Object(id = servId), name = "start", description = "Commencer l'aventure")
-async def classes(interaction: discord.Interaction):
-    await interaction.response.send_message(view=character.ClassesView(),ephemeral = True)
 
 class ChatGPT(commands.Cog):
     def __init__(self, bot):
@@ -96,7 +96,35 @@ def setup(bot):
     bot.add_cog(ChatGPT(bot))
 
 
+@bot.tree.command(guild=discord.Object(id=servId), name="start", description="Commencer l'aventure")
+@app_commands.describe(prenom="prenom du perso", nom="nom du perso", sexes="t'as quoi entre les jambes", races="ton ethnie", classes="quelle classes tu vas incarné")
+@app_commands.choices(sexes=[
+    discord.app_commands.Choice(name='Homme', value='homme'),
+    discord.app_commands.Choice(name='Femme', value='femme'),
+    discord.app_commands.Choice(name='Autre', value='autre')
+], races=[
+    discord.app_commands.Choice(name='Humains', value='humains'),
+    discord.app_commands.Choice(name='Elfes', value='elfes'),
+    discord.app_commands.Choice(name='Nains', value='nains'),
+    discord.app_commands.Choice(name='Demi-Géant', value='demigeant'),
+    discord.app_commands.Choice(name='Demi-Ange', value='demiange'),
+    discord.app_commands.Choice(name='Demi-Demon', value='demidemon')
+], classes=[
+    discord.app_commands.Choice(name='Guerrier', value='guerrier'),
+    discord.app_commands.Choice(name='Voleur', value='voleur'),
+    discord.app_commands.Choice(name='Archer', value='archer'),
+    discord.app_commands.Choice(name='Magicien', value='magicien')
+])
+async def say(interaction: discord.Interaction, prenom: str, nom: str, sexes: app_commands.Choice[str], races: app_commands.Choice[str], classes: app_commands.Choice[str]):
+    myperso = character.CreatePerso(prenom, nom, sexes, races, classes)
 
+    embed = discord.Embed(title="Bienvenue dans le monde de Haxril", description="N'hesite pas a faire /lore pour avoir connaitre l'histoire du monde", colour=discord.Colour.random())
+    embed.set_thumbnail(url ="https://images.frandroid.com/wp-content/uploads/2021/03/latence-reseau-lag.png")
+    embed.add_field(name="Prenom Nom", value="Guerrier")
+
+    embed.set_footer(text="Create by The Creator")
+
+    await interaction.response.send_message(f"Très Bien: `{myperso.prenom} {myperso.nom}`" , embed=embed)
 
 
 # Exécuter le bot avec le token

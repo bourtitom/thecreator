@@ -7,26 +7,49 @@ bot = commands.Bot(command_prefix='+', intents=intents)
 
 servId = 1177549504883466340
 
-# LES CLASSES
-class ChoiseClasses(discord.ui.Select):
-    def __init__(self):
-        options = [
-            discord.SelectOption(label="Classe guerrier"),
-            discord.SelectOption(label="Classe archer", value="archer"),
-            discord.SelectOption(label="Classe voleur", value="voleur"),
-            discord.SelectOption(label="Classe magicien", value="magicien"),
-        ]
-        super().__init__(placeholder="Choisis ta classe", options=options, min_values=1, max_values=1)
+class Titles():
+     def __init__(self, name , condition ,rank, bonus):
+          self.name = name
+          self.condition = condition
+          self.rank = rank
+          self.bonus = bonus
 
-    async def callback(self, interaction: discord.Interaction):
-        await interaction.response.send_message(f"Vous avez choisi la classe {self.values[0]}")
+class Stats():
+     def __init__(self, force ,agilite , endurance, mana, intelligence, sagesse,chance, charisme, reputation):
+          self.force = force
+          self.agilite = agilite
+          self.endurance = endurance
+          self.mana = mana
+          self.intelligence = intelligence
+          self.sagesse = sagesse
+          self.chance = chance
+          self.charisme = charisme
+          self.reputation = reputation
 
-class ClassesView(discord.ui.View):
-    def __init__(self):
-        super().__init__()
-        self.add_item(ChoiseClasses())
+    # LES CLASSES
+class Classes():
+	def __init__(self, name, weapons, statsbase):
+         self.name = name
+         if(name == "guerrier"):
+            self.statsbase = Stats(3, 1, 3, 2, 1, 1, 2, 3, 1) # 17 pts
+            self.weapons = 'Epee'
+         elif(name == "voleur"):
+            self.statsbase = Stats(2, 3, 1, 2, 2, 1, 3, 2, 1) # 17 pts
+            self.weapons = 'Griffe'
+         elif(name == "archer"):
+            self.statsbase = Stats(1, 3, 1, 3, 2, 3, 2, 1, 1) # 17 pts
+            self.weapons = 'Arc'
+         elif(name == "magicien"):
+            self.statsbase = Stats(1, 2, 2, 3, 3, 2, 2, 1, 1) # 17 pts
+            self.weapons = 'Baton'
 
-# Commande slash
-@bot.tree.command(guild=discord.Object(id=servId), name="start", description="Commencer l'aventure")
-async def classes(interaction: discord.Interaction):
-    await interaction.response.send_message(view=ClassesView(), ephemeral=True)
+
+class CreatePerso(): ## /start Tom Bourti 
+    def __init__(self, prenom, nom , sexes,races, classes):
+         self.prenom = prenom
+         self.nom = nom
+         self.age = 10
+         self.sexes = sexes
+         self.races = races
+         self.potentielle = 1
+         self.classes = classes
