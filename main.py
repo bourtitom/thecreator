@@ -117,7 +117,25 @@ def setup(bot):
 ])
 async def say(interaction: discord.Interaction, prenom: str, nom: str, sexes: app_commands.Choice[str], races: app_commands.Choice[str], classes: app_commands.Choice[str]):
     myperso = character.CreatePerso(prenom, nom, sexes, races, classes)
-    embed = discord.Embed(title="Bienvenue dans le monde de Haxril", description="N'hesite pas a faire /lore pour avoir connaitre l'histoire du monde", colour=discord.Colour.random())
+    embed = discord.Embed(title="Bienvenue dans le monde d'Haxril",
+                        colour=0x00b7ff)
+    embed.set_image(url="https://media.discordapp.net/attachments/1177549504883466343/1179736048138465393/power1-transformed.png?ex=657addd0&is=656868d0&hm=932af479a2d3d9f72404920f9b3f2c365e6c0a7b2dc1acbacb20b0e793c6f377&=&format=webp&quality=lossless&width=1954&height=1042")
+
+    embed.set_author(name="The Creator")
+
+    embed.add_field(name="Prenom Nom",
+                    value="age : 19",
+                    inline=False)
+    embed.add_field(name="Race :",
+                    value="Elfes",
+                    inline=True)
+    embed.add_field(name="Classes :",
+                    value="Guerrier",
+                    inline=True)
+    embed.add_field(name="Sexe :",
+                    value="Homme",
+                    inline=True)
+
     urlP = None
     if myperso.classes.value == "guerrier": 
         urlP ="https://cdn.discordapp.com/attachments/1178679100358013020/1178679100622262272/dragonica-warrior.png?ex=65770574&is=65649074&hm=c619c31d4d4c0e872e405a77558b7c88c640350db413e3420e31871e816a62cb&"
@@ -131,11 +149,12 @@ async def say(interaction: discord.Interaction, prenom: str, nom: str, sexes: ap
         urlP ="https://cdn.discordapp.com/attachments/1178978706342023238/1178978706467864617/image.png?ex=65781c7b&is=6565a77b&hm=b3502700c842c147e73bcf02787227bf8e10aeb45c5c1637461957b280f10207&"
 
     embed.set_thumbnail(url=urlP)
-    embed.add_field(name="Prenom Nom", value="Guerrier")
 
-    embed.set_footer(text="Create by The Creator")
 
-    await interaction.response.send_message(f"Très Bien: `{myperso.prenom} {myperso.nom}`" , embed=embed)
+    embed.set_footer(text="N'hesite pas a faire /lore pour connaitre l'histoire du monde",
+                    icon_url="https://slate.dan.onl/slate.png")
+
+    await interaction.response.send_message(embed=embed)
 
 
 # Exécuter le bot avec le token
