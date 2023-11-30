@@ -35,7 +35,7 @@ async def ping(ctx):
     await ctx.send('Pong!')
 
 # premiere commande de test
-@bot.tree.command(guild = discord.Object(id= servId), name = "test" , description = "test",)
+@bot.tree.command(guild = discord.Object(id= servId), name = "feur" , description = "test",)
 async def test_slash(interaction : discord.interactions):
     await interaction.response.send_message('TEST !')
 
@@ -96,6 +96,7 @@ def setup(bot):
     bot.add_cog(ChatGPT(bot))
 
 
+
 @bot.tree.command(guild=discord.Object(id=servId), name="start", description="Commencer l'aventure")
 @app_commands.describe(prenom="prenom du perso", nom="nom du perso", sexes="t'as quoi entre les jambes", races="ton ethnie", classes="quelle classes tu vas incarné")
 @app_commands.choices(sexes=[
@@ -123,17 +124,17 @@ async def say(interaction: discord.Interaction, prenom: str, nom: str, sexes: ap
 
     embed.set_author(name="The Creator")
 
-    embed.add_field(name="Prenom Nom",
-                    value="age : 19",
+    embed.add_field(name=f"{myperso.prenom} {myperso.nom}",
+                    value=f"{myperso.age} ans",
                     inline=False)
     embed.add_field(name="Race :",
-                    value="Elfes",
+                    value=myperso.races.value,
                     inline=True)
     embed.add_field(name="Classes :",
-                    value="Guerrier",
+                    value=myperso.classes.value,
                     inline=True)
     embed.add_field(name="Sexe :",
-                    value="Homme",
+                    value=myperso.sexes.value,
                     inline=True)
 
     urlP = None
