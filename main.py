@@ -118,7 +118,7 @@ def setup(bot):
 async def say(interaction: discord.Interaction, prenom: str, nom: str, sexes: app_commands.Choice[str], races: app_commands.Choice[str], classes: app_commands.Choice[str]):
     myperso = character.CreatePerso(prenom, nom, sexes, races, classes)
     embed = discord.Embed(title="Bienvenue dans le monde de Haxril", description="N'hesite pas a faire /lore pour avoir connaitre l'histoire du monde", colour=discord.Colour.random())
-    
+    url = None
     if myperso.classes == "guerrier": 
         url ="https://cdn.discordapp.com/attachments/1178679100358013020/1178679100622262272/dragonica-warrior.png?ex=65770574&is=65649074&hm=c619c31d4d4c0e872e405a77558b7c88c640350db413e3420e31871e816a62cb&"
     elif myperso.classes == "voleur":
