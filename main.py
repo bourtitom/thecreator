@@ -30,6 +30,9 @@ servId = 1177549504883466340
 @bot.event
 async def on_ready():
     print(f"{bot.user.name} s'est bien connecter")
+    await bot.change_presence(activity=discord.Activity
+    (type=discord.ActivityType.playing, name="CRÉE SON MONDE"))
+
 
     try:
         synced = await bot.tree.sync(guild = discord.Object(id=servId))
