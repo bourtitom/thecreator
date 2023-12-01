@@ -1,42 +1,45 @@
 import discord
 import os
-import openai
 from cogs import character
-from PNJ import pnj
-from discord.ext import commands
+from discord.ext.commands import Context
+from discord.ui import Button, View
 from discord import app_commands
-from decouple import config
+from discord.ext import commands
 from dotenv import load_dotenv
+from decouple import config
 
 
-servId = 1177549504883466340
-
-# Récupérer le token depuis les variables d'environnement ou un fichier .env
+load_dotenv()
 discord_token = os.environ.get('DISCORD_TOKEN', config('DISCORD_TOKEN'))
-
-# Initialiser le bot
+# importation des intents du bot discord
 intents = discord.Intents().all()
-bot = commands.Bot(command_prefix='!', intents=intents)
-
-client = discord.Client(intents = intents )
+# initialisation du prefix du bot
+bot = commands.Bot(command_prefix = '+', intents = intents)
+# configuration des intents
+intents.message_content = True
+intents.guilds = True
+intents.members = True
+# lier l'appelle du bot a une variable
+client = discord.Client(intents = intents)
+# commande slash
 tree = app_commands.CommandTree(client)
 
-# Événement lorsque le bot est prêt
+servId = 1177549504883466340
+# verifier si le bot s'est bien connecter 
 @bot.event
 async def on_ready():
-    print(f'Connecté en tant que {bot.user.name} ({bot.user.id})')
+    print(f"{bot.user.name} s'est bien connecter")
 
-    # Ajoutez la cog ChatGPT
-    bot.add_cog(ChatGPT(bot))
-    
-    # Chargez l'extension ChatGPT
-    bot.load_extension("chatGPT")
+    try:
+        synced = await bot.tree.sync(guild = discord.Object(id=servId))
+        # affichage de tout les commandes fonctionnel
+        print(f"Synced {(len(synced))} commands")
 
-# Commande simple pour répondre à "ping" avec "pong"
-@bot.command(name='ping')
-async def ping(ctx):
-    await ctx.send('Pong!')
-
+    except Exception as e:
+        print(e)
+# detection du owner du serveur   
+def is_owner(interaction):
+        return interaction.user.id == interaction.guild.owner.id
 
 @bot.tree.command(guild = discord.Object(id= servId), name = "latence" , description = "Avoir la latence du bot",)
 @commands.has_permissions(administrator=True)
@@ -47,53 +50,25 @@ async def latence(interaction : discord.interactions):
     embed.add_field(name="Latence du bot : ",value=f"**{latency}**")
     await interaction.response.send_message(embed = embed)
 
-    # CREATION DU PERSONNAGE
 
-class ChatGPT(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-        openai.api_key = "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"
+@bot.tree.command(guild = discord.Object(id= servId), name = "init" , description = "Avoir la latence du bot")
+@commands.has_permissions(administrator=True)
+async def init(interaction = discord.interactions):
+    guild = interaction.guild
+    noms_des_salons = {"route": ["Route vers la capital", "Route vers Avaloria", "Route vers Sylphéria", "Route vers Sylphéria", "Route vers Lysandria", "Route vers Brisefer", "Route vers Élanor"],"La capital" : ["commandes","Zone commercial","Chateau"],"Avaloria" : ["commandes","La ville","bibliothèque","la plane"],"Sylphéria" : ["commandes","Academie des mages"],"Lysandria" : ["commandes","marcher noir","le port"],"Brisefer" : ["commandes","la montagne","zone commercial"],"Élanor" : ["commandes","Le grand arbre","Forêt d'Élanor"]}
 
-    async def ask_for_response(self, ctx, question: str):
-        await ctx.defer()
+    # Créer les catégories
+    for nomCategorie in noms_des_salons:
+        await guild.create_category_channel(name=nomCategorie)
 
-        message = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            max_tokens=100,
-            messages=[
-                {"role": "system", "content": "tu es un humain l'lambda mais passionné de code"},
-                {"role": "user", "content": question}
-            ]
-        )
+        # Récupérer la catégorie par son nom
+        categorie = discord.utils.get(guild.categories, name=nomCategorie)
 
-        response = message["choices"][0]["message"]["content"]
+        # Créer les salons dans la catégorie
+        for nomSalon in noms_des_salons[nomCategorie]:
+            await guild.create_text_channel(name=nomSalon, category=categorie)
 
-        return response
-
-@bot.command()
-async def talk(ctx, prenom_pnj, *, message=None):
-    if message is None:
-        await ctx.send("Veuillez fournir un message.")
-        return
-
-    pnj_trouve = next((pnjSearch for pnjSearch in pnj.liste_pnj_global if pnjSearch.prenom == prenom_pnj), None)
-
-    if pnj_trouve:
-        # Créez une instance de la classe ChatGPT
-        chat_gpt_instance = ChatGPT(bot)
-        
-        # Utilisez l'API GPT-3.5 pour générer une réponse
-        reponse_gpt = await chat_gpt_instance.ask_for_response(ctx, question=message)
-        
-        # Affichez des informations sur le PNJ trouvé
-        await ctx.send(f"{pnj_trouve.prenom} {pnj_trouve.nom}, Âge: {pnj_trouve.age}, Marchand: {pnj_trouve.marchand} : {reponse_gpt}")
-    else:
-        # Envoyez un message si le PNJ n'est pas trouvé
-        print("ez")
-
-def setup(bot):
-    bot.add_cog(ChatGPT(bot))
-
+    await interaction.response.send_message("Les salons viennent d'être créés !")
 
 
 @bot.tree.command(guild=discord.Object(id=servId), name="start", description="Commencer l'aventure")
@@ -116,6 +91,8 @@ def setup(bot):
     discord.app_commands.Choice(name='Magicien', value='magicien'),
     discord.app_commands.Choice(name='Chaman', value='chaman')
 ])
+
+
 async def say(interaction: discord.Interaction, prenom: str, nom: str, sexes: app_commands.Choice[str], races: app_commands.Choice[str], classes: app_commands.Choice[str]):
     myperso = character.CreatePerso(prenom, nom, sexes, races, classes)
     urlP = None
@@ -144,13 +121,13 @@ async def say(interaction: discord.Interaction, prenom: str, nom: str, sexes: ap
                     value=f"{myperso.age} ans",
                     inline=False)
     embed.add_field(name="Race :",
-                    value=myperso.races.value,
+                    value=myperso.races.name,
                     inline=True)
     embed.add_field(name="Classes :",
-                    value=myperso.classes.value,
+                    value=myperso.classes.name,
                     inline=True)
     embed.add_field(name="Sexe :",
-                    value=myperso.sexes.value,
+                    value=myperso.sexes.name,
                     inline=True)
 
 
@@ -162,6 +139,5 @@ async def say(interaction: discord.Interaction, prenom: str, nom: str, sexes: ap
 
     await interaction.response.send_message(embed=embed)
 
-
-# Exécuter le bot avec le token
+# token du bot (a changer de place avec dotenv)
 bot.run(discord_token)
