@@ -1,20 +1,21 @@
 import discord
 import os
 from cogs import character
+from PNJ import pnj
 from discord.ext.commands import Context
 from discord.ui import Button, View
 from discord import app_commands
 from discord.ext import commands
-from dotenv import load_dotenv
 from decouple import config
+import openai
 
 
-load_dotenv()
+
 discord_token = os.environ.get('DISCORD_TOKEN', config('DISCORD_TOKEN'))
 # importation des intents du bot discord
 intents = discord.Intents().all()
 # initialisation du prefix du bot
-bot = commands.Bot(command_prefix = '+', intents = intents)
+bot = commands.Bot(command_prefix = '!', intents = intents)
 # configuration des intents
 intents.message_content = True
 intents.guilds = True
@@ -32,6 +33,12 @@ async def on_ready():
 
     try:
         synced = await bot.tree.sync(guild = discord.Object(id=servId))
+
+         # Ajoutez la cog ChatGPT
+        bot.add_cog(ChatGPT(bot))
+    
+        # Chargez l'extension ChatGPT
+        bot.load_extension("chatGPT")
         # affichage de tout les commandes fonctionnel
         print(f"Synced {(len(synced))} commands")
 
@@ -49,6 +56,51 @@ async def latence(interaction : discord.interactions):
     embed.set_thumbnail(url ="https://images.frandroid.com/wp-content/uploads/2021/03/latence-reseau-lag.png")
     embed.add_field(name="Latence du bot : ",value=f"**{latency}**")
     await interaction.response.send_message(embed = embed)
+
+class ChatGPT(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        openai.api_key = os.environ.get('OPENAI_TOKEN', config('OPENAI_TOKEN'))
+
+    async def ask_for_response(self, ctx, question: str):
+        await ctx.defer()
+
+        message = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            max_tokens=100,
+            messages=[
+                {"role": "system", "content": "tu es un humain l'lambda mais passionné de code"},
+                {"role": "user", "content": question}
+            ]
+        )
+
+        response = message["choices"][0]["message"]["content"]
+
+        return response 
+
+@bot.command()
+async def talk(ctx, prenom_pnj, *, message=None):
+    if message is None:
+        await ctx.send("Veuillez fournir un message.")
+        return
+
+    pnj_trouve = next((pnjSearch for pnjSearch in pnj.liste_pnj_global if pnjSearch.prenom == prenom_pnj), None)
+
+    if pnj_trouve:
+        # Créez une instance de la classe ChatGPT
+        chat_gpt_instance = ChatGPT(bot)
+        
+        # Utilisez l'API GPT-3.5 pour générer une réponse
+        reponse_gpt = await chat_gpt_instance.ask_for_response(ctx, question=message)
+        
+        # Affichez des informations sur le PNJ trouvé
+        await ctx.send(f"{pnj_trouve.prenom} {pnj_trouve.nom}, Âge: {pnj_trouve.age}, Marchand: {pnj_trouve.marchand} : {reponse_gpt}")
+    else:
+        # Envoyez un message si le PNJ n'est pas trouvé
+        print("ez")
+
+def setup(bot):
+    bot.add_cog(ChatGPT(bot))
 
 
 @bot.tree.command(guild = discord.Object(id= servId), name = "init" , description = "Avoir la latence du bot")
