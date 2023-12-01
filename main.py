@@ -18,6 +18,9 @@ discord_token = os.environ.get('DISCORD_TOKEN', config('DISCORD_TOKEN'))
 intents = discord.Intents().all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+client = discord.Client(intents = intents )
+tree = app_commands.CommandTree(client)
+
 # Événement lorsque le bot est prêt
 @bot.event
 async def on_ready():
