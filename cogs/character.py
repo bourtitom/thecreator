@@ -42,6 +42,9 @@ class Classes():
          elif(name == "magicien"):
             self.statsbase = Stats(1, 2, 2, 3, 3, 2, 2, 1, 1) # 17 pts
             self.weapons = 'Baton'
+         elif(name == "chaman"):
+            self.statsbase = Stats(1, 2, 2, 4, 3, 1, 3, 1, 0) # 17 pts
+            self.weapons = 'Livre'
 
 
 class CreatePerso(): ## /start Tom Bourti 
