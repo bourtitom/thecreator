@@ -16,6 +16,10 @@ discord_token = os.environ.get('DISCORD_TOKEN', config('DISCORD_TOKEN'))
 
 # Initialiser le bot
 intents = discord.Intents().all()
+# lier l'appelle du bot a une variable
+client = discord.Client(intents = intents)
+# commande slash
+tree = app_commands.CommandTree(client)
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 # Événement lorsque le bot est prêt
@@ -34,10 +38,7 @@ async def on_ready():
 async def ping(ctx):
     await ctx.send('Pong!')
 
-# premiere commande de test
-@bot.tree.command(guild = discord.Object(id= servId), name = "test" , description = "test",)
-async def test_slash(interaction : discord.interactions):
-    await interaction.response.send_message('TEST !')
+
 
 @bot.tree.command(guild = discord.Object(id= servId), name = "latence" , description = "Avoir la latence du bot",)
 @commands.has_permissions(administrator=True)
@@ -53,7 +54,7 @@ async def latence(interaction : discord.interactions):
 class ChatGPT(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        openai.api_key = "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"
+        openai.api_key = os.environ.get('OPENAI_TOKEN', config('OPENAI_TOKEN'))
 
     async def ask_for_response(self, ctx, question: str):
         await ctx.defer()
@@ -70,6 +71,26 @@ class ChatGPT(commands.Cog):
         response = message["choices"][0]["message"]["content"]
 
         return response
+    
+
+@bot.tree.command(name="init")
+@commands.has_permissions(administrator=True)
+async def init(interaction = discord.interactions):
+    guild = interaction.guild
+    noms_des_salons = {"route": ["Route vers la capital", "Route vers Avaloria", "Route vers Sylphéria", "Route vers Sylphéria", "Route vers Lysandria", "Route vers Brisefer", "Route vers Élanor"],"La capital" : ["commandes","Zone commercial","Chateau"],"Avaloria" : ["commandes","La ville","bibliothèque","la plane"],"Sylphéria" : ["commandes","Academie des mages"],"Lysandria" : ["commandes","marcher noir","le port"],"Brisefer" : ["commandes","la montagne","zone commercial"],"Élanor" : ["commandes","Le grand arbre","Forêt d'Élanor"]}
+
+    # Créer les catégories
+    for nomCategorie in noms_des_salons:
+        await guild.create_category_channel(name=nomCategorie)
+
+        # Récupérer la catégorie par son nom
+        categorie = discord.utils.get(guild.categories, name=nomCategorie)
+
+        # Créer les salons dans la catégorie
+        for nomSalon in noms_des_salons[nomCategorie]:
+            await guild.create_text_channel(name=nomSalon, category=categorie)
+
+    await interaction.response.send_message("Les salons viennent d'être créés !")
 
 @bot.command()
 async def talk(ctx, prenom_pnj, *, message=None):
@@ -155,6 +176,8 @@ async def say(interaction: discord.Interaction, prenom: str, nom: str, sexes: ap
                     icon_url="https://slate.dan.onl/slate.png")
 
     await interaction.response.send_message(embed=embed)
+
+
 
 
 # Exécuter le bot avec le token
